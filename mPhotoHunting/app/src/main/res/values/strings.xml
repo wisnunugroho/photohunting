@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Photo Hunting</string>
+    <string name="lorem_ipsum">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</string>
+    <string name="default_tanggal">12 Sept 2015</string>
+    <string name="default_article_like_comment">12 like dan 2 comment</string>
+    <string name="comment">Comment</string>
+    <string name="like">Like</string>
+    <string name="komentar">Komentar ...</string>
+    <string name="submit">SUBMIT</string>
+    <string name="message_server_connect_is_failed">Tidak dapat menghubungi server</string>
+</resources>

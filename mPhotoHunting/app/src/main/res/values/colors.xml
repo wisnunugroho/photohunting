@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="white">#FFFFFF</color>
+    <color name="white_transparent_1">#dcffffff</color>
+    <color name="black">#000000</color>
+    <color name="black_alternate_1">#90000000</color>
+    <color name="black_alternate_2">#4d9e9e9e</color>
+    <color name="divider">#e0e0e0</color>
+
+    <color name="colorPrimary">#01376C</color>
+    <color name="colorPrimaryDark">#022D58</color>
+    <color name="colorAccent">#ffc107</color>
+
+    <color name="background">#eceff1</color>
+    <color name="background_avatar">#f7f7f7</color>
+
+    <color name="background_tab_layout">#25292C</color>
+    <color name="background_tab_selected">#070707</color>
+
+    <color name="text_color_hint">#e9ffffff</color>
+    <color name="text_color_black">#545558</color>
+    <color name="text_color_white">#c4ffffff</color>
+    <color name="text_color_special">#6183A0</color>
+
+    <color name="button_background">#FBFAFB</color>
+    <color name="button_background_grey">#EFF2F5</color>
+    <color name="button_background_grey_pressed">#dadbde</color>
+    <color name="button_background_green">#8bc34a</color>
+    <color name="button_background_green_pressed">#649b25</color>
+    <color name="button_background_orange">#ffc107</color>
+    <color name="button_background_orange_alternate_1">#e7ad00</color>
+    <color name="button_background_orange_pressed">#f57c00</color>
+    <color name="button_background_red">#e91e63</color>
+    <color name="button_background_red_pressed">#c2185b</color>
+
+    <color name="linear_background_secondary_information">#F9F9F9</color>
+
+</resources>
