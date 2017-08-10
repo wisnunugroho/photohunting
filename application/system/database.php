@@ -3,7 +3,7 @@ class Database{
 	public $server = "localhost";
 	public $username = "root";
 	public $password = "";
-	public $database = "photo_hunting";
+	public $database = "photo";
 	
 	public $connection;
 	

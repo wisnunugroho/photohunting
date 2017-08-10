@@ -127,6 +127,9 @@ class API {
             case 'photo_get_with_cid':
                 Photo::photo_get_with_cid($this->cid);
                 break;
+            case 'photo_get_likes_with_uid':
+                Photo::photo_get_likes_with_uid($this->uid);
+                break;
             case 'photo_get_likes_with_pid':
                 Photo::photo_get_likes_with_pid($this->pid);
                 break;

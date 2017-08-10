@@ -84,6 +84,7 @@ class Photo {
                     photo.location AS photoLocation,
                     photo.latitude AS photoLatitude,
                     photo.longitude AS photoLongitude,
+                    photo.description As photoDescription,
                     `user`.`name` AS photoBy
                 FROM
                     photo
@@ -91,6 +92,19 @@ class Photo {
                 INNER JOIN category ON photo.id_category = category.id_category
                 WHERE
                 photo.id_category = $cid";
+
+    CRUD::execute($sql, CRUD::$SELECT);
+  }
+
+  public static
+  function photo_get_likes_with_uid($uid){
+    $sql = "SELECT
+                photo_like_details.id_user,
+                photo_like_details.id_photo
+            FROM
+                photo_like_details
+            WHERE
+                photo_like_details.id_user = '$uid'";
 
     CRUD::execute($sql, CRUD::$SELECT);
   }
@@ -104,7 +118,9 @@ class Photo {
                 photo_like_details
             INNER JOIN `user` ON photo_like_details.id_user = `user`.id_user
             WHERE
-                photo_like_details.id_photo = '$id'";
+                photo_like_details.id_photo = '$id'
+            ORDER BY
+                photo_like_details.like_date DESC";
 
     CRUD::execute($sql, CRUD::$SELECT);
   }
@@ -119,7 +135,9 @@ class Photo {
                 photo_comment_details
             INNER JOIN `user` ON photo_comment_details.id_user = `user`.id_user
             WHERE
-                photo_comment_details.id_photo = '$id'";
+                photo_comment_details.id_photo = '$id'
+            ORDER BY
+                photo_comment_details.comment_date DESC";
 
     CRUD::execute($sql, CRUD::$SELECT);
   }
@@ -133,7 +151,7 @@ class Photo {
   }
 
   public static
-  function photo_insert_new_like($date, $uid, $pid) {
+  function photo_insert_new_like($date, $pid, $uid) {
     $sql = "INSERT INTO photo_like_details(like_date, id_user, id_photo)
                VALUES ('$date', '$uid', '$pid')";
 
@@ -160,9 +178,9 @@ class Photo {
   }
 
   public static
-  function photo_insert_new_comment($comment, $date, $uid, $pid) {
-    $sql = "INSERT INTO photo_comment_details(comment_content, comment_date, id_user, id_photo)
-               VALUES ('$comment', '$date', '$uid', '$pid')";
+  function photo_insert_new_comment($comment, $date, $pid, $uid) {
+    $sql = "INSERT INTO photo_comment_details(comment_content, comment_date, id_photo, id_user)
+               VALUES ('$comment', '$date', '$pid', '$uid')";
 
     $connection = CRUD::newConnection();
     $executor = $connection -> query($sql);

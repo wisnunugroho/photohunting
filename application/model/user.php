@@ -14,7 +14,7 @@ class User {
                 status_date AS userStatusDate,
                 registered AS userSince
             FROM
-                USER
+                user
             WHERE
                 email = '$email' AND
                 password = '$password'";
