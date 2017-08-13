@@ -60,7 +60,7 @@ public class LikeListActivity extends AppCompatActivity {
     }
 
     /**
-     * Method yang digunakan untuk mengambil data dari server cloud
+     * Method yang digunakan untuk mengambil data like dari server cloud
      * Request      : Photo.get_photo_like_with_pid(String photoId)
      *
      * @param pid photoId

@@ -13,10 +13,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.orhanobut.hawk.Hawk;
+import com.wisnu.photohunting.PhotoHuntingApp;
 import com.wisnu.photohunting.R;
 import com.wisnu.photohunting.adapter.PhotoFeedAdapter;
 import com.wisnu.photohunting.model.Photo;
 import com.wisnu.photohunting.model.User;
+import com.wisnu.photohunting.model.UserLike;
 import com.wisnu.photohunting.network.Request;
 import com.wisnu.photohunting.network.Response;
 import com.wisnu.photohunting.savingstate.PhotoFeedList;
@@ -35,10 +38,18 @@ import retrofit2.Callback;
 public class PhotoFeedFragment extends Fragment {
     private final String TAG = "com.wisnu.photohunting";
 
-    private List<Photo> mPhotoPostList = new ArrayList<>();
+    private List<Photo>    mPhotoPostList = new ArrayList<>();
+    private List<UserLike> mUserPhotoLike = new ArrayList<>();
 
     private RecyclerView       mRecyclerView;
     private SwipeRefreshLayout mRefresh;
+
+    private int photoPosSelection = 0;
+
+    public static PhotoFeedFragment newInstance() {
+        PhotoFeedFragment fragment = new PhotoFeedFragment();
+        return fragment;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -67,8 +78,10 @@ public class PhotoFeedFragment extends Fragment {
          * Jika tidak, maka ambil data dari server
          */
         mPhotoPostList = PhotoFeedList.getInstance().getPhotoList();
-        if (null == mPhotoPostList || mPhotoPostList.size() == 0)
+        if (null == mPhotoPostList || mPhotoPostList.size() == 0) {
             fetchAllFeeds();
+        }
+
 
         /**
          * Membuat object baru dari kelas PhotoFeedAdapter yang akan digunakan untuk menghubungkan
@@ -76,13 +89,15 @@ public class PhotoFeedFragment extends Fragment {
          * Binding Adapter      : PhotoFeedAdapter.class
          * Data                 : List<Photo> mPhotoPostList
          */
+        PhotoFeedAdapter adapter = new PhotoFeedAdapter(mPhotoPostList);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recyclerview);
-        mRecyclerView.setAdapter(new PhotoFeedAdapter(mPhotoPostList));
+        mRecyclerView.setAdapter(adapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-
-        ((PhotoFeedAdapter) mRecyclerView.getAdapter()).onItemClickedListener(new PhotoFeedAdapter.onClickListener() {
+        adapter.onItemClickedListener(new PhotoFeedAdapter.onClickListener() {
             @Override
-            public void onActionClickView(int itemCode, String pid) {
+            public void onActionClickView(int itemCode, int position, String pid) {
+                photoPosSelection = position;
+
                 User   user   = UserData.getInstance().getUser();
                 String userId = user.getUserId();
                 switch (itemCode) {
@@ -148,6 +163,10 @@ public class PhotoFeedFragment extends Fragment {
                     Log.d(TAG, "onResponse: " + photo.toString());
                 }
 
+                /** get user photo like */
+                String uid = Hawk.get(PhotoHuntingApp.USER_ID, "");
+                fetchUserLikesPhoto(uid);
+
                 mRecyclerView.getAdapter().notifyDataSetChanged();
             }
 
@@ -155,9 +174,48 @@ public class PhotoFeedFragment extends Fragment {
             public void onFailure(Call<Response.Photo> call, Throwable t) {
                 mRefresh.setRefreshing(false);
                 Toast.makeText(getActivity(), R.string.message_server_connect_is_failed,
-                               Toast.LENGTH_SHORT).show();
+                        Toast.LENGTH_SHORT).show();
 
                 Log.d(TAG, "onFailure: " + t.getLocalizedMessage());
+            }
+        });
+    }
+
+    private void fetchUserLikesPhoto(String uid) {
+        Request.Photo.get_photo_like_with_uid(uid).enqueue(new Callback<Response.UserLike>() {
+            @Override
+            public void onResponse(Call<Response.UserLike> call, retrofit2.Response<Response.UserLike> response) {
+                if (response.isSuccessful()) {
+                    mUserPhotoLike.clear();
+                    mUserPhotoLike.addAll(response.body().getUserListLike());
+                } else {
+                    for (Photo photo : mPhotoPostList) {
+                        photo.setLike(false);
+                    }
+                }
+
+                for (Photo photo : mPhotoPostList) {
+                    boolean found = false;
+                    for (UserLike userLike : mUserPhotoLike) {
+                        if (userLike.getPhotoId().equals(photo.getPhotoID())) {
+                            found = true;
+                        }
+                    }
+
+                    photo.setLike(found ? true : false);
+                }
+
+                for (Photo photo : mPhotoPostList) {
+                    if (photo.isLike())
+                        System.out.println("Photo Liked by User are : " + photo.getPhotoID());
+                }
+
+                mRecyclerView.getAdapter().notifyDataSetChanged();
+            }
+
+            @Override
+            public void onFailure(Call<Response.UserLike> call, Throwable t) {
+                System.out.println(t.getLocalizedMessage());
             }
         });
     }
@@ -169,25 +227,27 @@ public class PhotoFeedFragment extends Fragment {
      * @param userId
      */
     private void like(String photoId, String userId) {
-        Log.d(TAG, "like: " + userId + " on photoId " + photoId);
-
         Request.Photo.add_like(photoId, userId).enqueue(new Callback<Response.Basic>() {
             @Override
             public void onResponse(Call<Response.Basic> call, retrofit2.Response<Response.Basic> response) {
                 if (response.isSuccessful()) {
-                    Toast.makeText(getActivity(), "", Toast.LENGTH_SHORT).show();
+                    int likeCount = Integer.parseInt(mPhotoPostList.get(photoPosSelection).getPhotoTotalLike()) + 1;
+                    mPhotoPostList.get(photoPosSelection).setLike(true);
+                    mPhotoPostList.get(photoPosSelection).setPhotoTotalLike(String.valueOf(likeCount));
                     Utils.showToast(getActivity(), "Anda menyukai foto ini");
                 } else {
                     Utils.showToast(getActivity(), "Anda sudah menyukai foto ini");
                     Log.d(TAG, "onResponse: Gagal menambahkan like pada foto");
                 }
+
+                mRecyclerView.getAdapter().notifyDataSetChanged();
             }
 
             @Override
             public void onFailure(Call<Response.Basic> call, Throwable t) {
                 Log.d(TAG, "onFailure: " + t.getLocalizedMessage());
                 Toast.makeText(getActivity(), R.string.message_server_connect_is_failed,
-                               Toast.LENGTH_SHORT).show();
+                        Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -200,7 +260,21 @@ public class PhotoFeedFragment extends Fragment {
      */
     private void comment(String photoId, String userId) {
         Log.d(TAG, "comment: " + userId + " on photoId " + photoId);
-        InsertComment.newInstance(photoId, userId).show(getActivity().getFragmentManager(), "INSERT_COMMENT");
+        InsertComment.CommentListener commentListener = new InsertComment.CommentListener() {
+            @Override
+            public void onSuccess() {
+                int commentCount = Integer.parseInt(mPhotoPostList.get(photoPosSelection).getPhotoTotalComment()) + 1;
+                mPhotoPostList.get(photoPosSelection).setPhotoTotalComment(String.valueOf(commentCount));
+                mRecyclerView.getAdapter().notifyDataSetChanged();
+            }
+
+            @Override
+            public void onFailed() {
+            }
+        };
+
+        InsertComment.newInstance(photoId, userId, commentListener).show(getActivity().getFragmentManager(), "INSERT_COMMENT");
+        mRecyclerView.getAdapter().notifyDataSetChanged();
     }
 
     /**

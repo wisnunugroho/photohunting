@@ -91,7 +91,17 @@ public class PhotoActivity extends AppCompatActivity {
         return new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                InsertComment.newInstance(photoId, userId).show(getFragmentManager(), "INSERT_COMMENT");
+                InsertComment.newInstance(photoId, userId, new InsertComment.CommentListener() {
+                    @Override
+                    public void onSuccess() {
+
+                    }
+
+                    @Override
+                    public void onFailed() {
+
+                    }
+                }).show(getFragmentManager(), "INSERT_COMMENT");
             }
         };
     }

@@ -1,7 +1,7 @@
 package com.wisnu.photohunting.adapter;
 
-import android.content.Context;
-import android.graphics.Typeface;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -9,8 +9,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 import com.wisnu.photohunting.R;
 import com.wisnu.photohunting.model.Photo;
 import com.wisnu.photohunting.network.BaseURL;
@@ -37,7 +39,7 @@ public class PhotoFeedAdapter extends RecyclerView.Adapter<PhotoFeedAdapter.Hold
     }
 
     @Override
-    public void onBindViewHolder(Holder holder, int position) {
+    public void onBindViewHolder(final Holder holder, int position) {
         Photo  photoFeeds   = listPhotoFeeds.get(position);
         String postedBy     = "dipost oleh " + photoFeeds.getPhotoBy();
         String totalLike    = photoFeeds.getPhotoTotalLike() + " like";
@@ -50,11 +52,27 @@ public class PhotoFeedAdapter extends RecyclerView.Adapter<PhotoFeedAdapter.Hold
         holder.photoCountLike.setText(totalLike);
         holder.photoCountComment.setText(totalComment);
 
-        String photoUrl = BaseURL.MAIN_POINT + BaseURL.END_POINT_IMAGE + photoFeeds.getPhotoUrl();
-        Picasso.with(holder.photoImage.getContext()).load(photoUrl).into(holder.photoImage);
-        System.out.println(photoUrl);
+        if (photoFeeds.isLike()) {
+            holder.btnLike.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_thumb_up_orange, 0, 0, 0);
+        }
 
-        Log.d("com.wisnu.photohunting", "onBindViewHolder: " + photoFeeds.toString());
+        String photoUrl = BaseURL.MAIN_POINT + BaseURL.END_POINT_IMAGE + photoFeeds.getPhotoUrl();
+        Picasso.with(holder.photoImage.getContext()).load(photoUrl).into(new Target() {
+            @Override
+            public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                holder.photoNoImage.setVisibility(View.GONE);
+                holder.photoImage.setImageBitmap(bitmap);
+            }
+
+            @Override
+            public void onBitmapFailed(Drawable errorDrawable) {
+                holder.photoNoImage.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onPrepareLoad(Drawable placeHolderDrawable) {
+            }
+        });
     }
 
     @Override
@@ -69,6 +87,7 @@ public class PhotoFeedAdapter extends RecyclerView.Adapter<PhotoFeedAdapter.Hold
     public class Holder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView  postName;
         TextView  postedBy;
+        ImageView photoNoImage;
         ImageView photoImage;
         TextView  photoDate;
         TextView  photoDescription;
@@ -81,6 +100,7 @@ public class PhotoFeedAdapter extends RecyclerView.Adapter<PhotoFeedAdapter.Hold
             super(itemView);
             postName = (TextView) itemView.findViewById(R.id.postfeed_tv_name);
             postedBy = (TextView) itemView.findViewById(R.id.postfeed_tv_postedby);
+            photoNoImage = (ImageView) itemView.findViewById(R.id.no_photo);
             photoImage = (ImageView) itemView.findViewById(R.id.postfeed_img_photoImage);
             photoDate = (TextView) itemView.findViewById(R.id.postfeed_tv_date);
             photoDescription = (TextView) itemView.findViewById(R.id.postfeed_tv_description);
@@ -100,16 +120,21 @@ public class PhotoFeedAdapter extends RecyclerView.Adapter<PhotoFeedAdapter.Hold
         public void onClick(View v) {
             switch (v.getId()) {
                 case R.id.postfeed_tv_like:
-                    itemClicked.onActionClickView(ITEM_COUNT_LIKE, listPhotoFeeds.get(getAdapterPosition()).getPhotoID());
+                    itemClicked.onActionClickView(ITEM_COUNT_LIKE, getAdapterPosition(), listPhotoFeeds.get(getAdapterPosition()).getPhotoID());
                     break;
                 case R.id.postfeed_tv_comment:
-                    itemClicked.onActionClickView(ITEM_COUNT_COMMENT, listPhotoFeeds.get(getAdapterPosition()).getPhotoID());
+                    itemClicked.onActionClickView(ITEM_COUNT_COMMENT, getAdapterPosition(), listPhotoFeeds.get(getAdapterPosition()).getPhotoID());
                     break;
                 case R.id.postfeed_btn_like:
-                    itemClicked.onActionClickView(ITEM_BUTTON_LIKE, listPhotoFeeds.get(getAdapterPosition()).getPhotoID());
+                    if (!listPhotoFeeds.get(getAdapterPosition()).isLike()) {
+                        itemClicked.onActionClickView(ITEM_BUTTON_LIKE, getAdapterPosition(), listPhotoFeeds.get(getAdapterPosition()).getPhotoID());
+
+                        btnLike.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_thumb_up_orange, 0, 0, 0);
+                        notifyDataSetChanged();
+                    }
                     break;
                 case R.id.postfeed_btn_comment:
-                    itemClicked.onActionClickView(ITEM_BUTTON_COMMENT, listPhotoFeeds.get(getAdapterPosition()).getPhotoID());
+                    itemClicked.onActionClickView(ITEM_BUTTON_COMMENT, getAdapterPosition(), listPhotoFeeds.get(getAdapterPosition()).getPhotoID());
                     break;
                 case R.id.postfeed_img_photoImage:
                     itemClicked.onPhotoClickView(listPhotoFeeds.get(getAdapterPosition()));
@@ -119,7 +144,7 @@ public class PhotoFeedAdapter extends RecyclerView.Adapter<PhotoFeedAdapter.Hold
     }
 
     public interface onClickListener {
-        void onActionClickView(int itemCode, String pid);
+        void onActionClickView(int itemCode, int position, String pid);
 
         void onPhotoClickView(Photo photo);
     }

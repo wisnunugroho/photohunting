@@ -22,12 +22,14 @@ import retrofit2.Callback;
 
 public class InsertComment extends DialogFragment implements View.OnClickListener {
     private static InsertComment instance = new InsertComment();
+    private static CommentListener commentListener;
 
-    public static InsertComment newInstance(String pid, String uid) {
+    public static InsertComment newInstance(String pid, String uid, CommentListener commentListener) {
         Bundle argument = new Bundle();
         argument.putString("PID", pid);
         argument.putString("UID", uid);
         instance.setArguments(argument);
+        instance.commentListener = commentListener;
         return instance;
     }
 
@@ -52,8 +54,8 @@ public class InsertComment extends DialogFragment implements View.OnClickListene
 
     @Override
     public void onClick(View v) {
-        String pid = this.getArguments().getString("PID");
-        String uid = this.getArguments().getString("UID");
+        String pid     = this.getArguments().getString("PID");
+        String uid     = this.getArguments().getString("UID");
         String message = edMessage.getText().toString();
         Utils.showOnConsole("InsertComment", "onClick : PID, UID, Message : " + pid + " | " + uid + " | " + message);
 
@@ -62,7 +64,9 @@ public class InsertComment extends DialogFragment implements View.OnClickListene
             public void onResponse(Call<Response.Basic> call, retrofit2.Response<Response.Basic> response) {
                 if (response.body().getData() != null) {
                     if (!response.body().getStatus().equals("false")) {
+                        commentListener.onSuccess();
                         Utils.showToast(getActivity(), "Berhasil menambahkan komentar");
+                        edMessage.getText().clear();
                         dismiss();
                     } else onFailure(call, new Throwable("Gagal menambahkan komentar"));
                 } else onFailure(call, new Throwable("Gagal menambahkan Komentar"));
@@ -73,7 +77,14 @@ public class InsertComment extends DialogFragment implements View.OnClickListene
             @Override
             public void onFailure(Call<Response.Basic> call, Throwable t) {
                 Utils.showOnConsole("InsertComment", "onFailure : " + t.getLocalizedMessage());
+                commentListener.onFailed();
             }
         });
+    }
+
+    public interface CommentListener {
+        void onSuccess();
+
+        void onFailed();
     }
 }

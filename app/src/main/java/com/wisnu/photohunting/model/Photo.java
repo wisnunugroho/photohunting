@@ -4,18 +4,19 @@ package com.wisnu.photohunting.model;
  * Created by Wahyu Adi S on 18/11/2015.
  */
 public class Photo {
-    String photoID;
-    String photoName;
-    String photoDescription;
-    String photoUrl;
-    String photoLocation;
-    String photoLatitude;
-    String photoLongitude;
-    String photoDate;
-    String photoBy;
-    String photoCategory;
-    String photoTotalLike;
-    String photoTotalComment;
+    String  photoID;
+    String  photoName;
+    String  photoDescription;
+    String  photoUrl;
+    String  photoLocation;
+    String  photoLatitude;
+    String  photoLongitude;
+    String  photoDate;
+    String  photoBy;
+    String  photoCategory;
+    String  photoTotalLike;
+    String  photoTotalComment;
+    boolean isLike;
 
     public String getPhotoID() {
         return photoID;
@@ -113,6 +114,14 @@ public class Photo {
         this.photoTotalComment = photoTotalComment;
     }
 
+    public boolean isLike() {
+        return isLike;
+    }
+
+    public void setLike(boolean like) {
+        isLike = like;
+    }
+
     @Override
     public String toString() {
         return "Photo{" +
@@ -128,6 +137,7 @@ public class Photo {
                 ", photoCategory='" + photoCategory + '\'' +
                 ", photoTotalLike='" + photoTotalLike + '\'' +
                 ", photoTotalComment='" + photoTotalComment + '\'' +
+                ", isLike=" + isLike +
                 '}';
     }
 }

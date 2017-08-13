@@ -6,13 +6,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PhotoFeedList {
-    private static PhotoFeedList instance   = new PhotoFeedList();
-    private        List<Photo>   mPhotoList = new ArrayList<>();
+    // singleton object
+    private static PhotoFeedList instance;
+
+    private List<Photo> mPhotoList = new ArrayList<>();
 
     private PhotoFeedList() {
     }
 
     public static PhotoFeedList getInstance() {
+        if (instance == null) instance = new PhotoFeedList();
         return instance;
     }
 

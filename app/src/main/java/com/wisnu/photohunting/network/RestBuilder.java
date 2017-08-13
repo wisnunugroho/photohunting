@@ -28,10 +28,10 @@ public class RestBuilder {
      * Add logging functionality
      **/
     private static OkHttpClient displayLogging() {
-        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
-        logging.setLevel(HttpLoggingInterceptor.Level.BASIC);
         return new OkHttpClient.Builder()
-                .addInterceptor(logging)
+                .addInterceptor(
+                        new HttpLoggingInterceptor()
+                                .setLevel(HttpLoggingInterceptor.Level.BODY))
                 .build();
     }
 

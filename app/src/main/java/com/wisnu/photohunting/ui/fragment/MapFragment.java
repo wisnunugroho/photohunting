@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -13,13 +14,28 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.orhanobut.hawk.Hawk;
+import com.wisnu.photohunting.PhotoHuntingApp;
 import com.wisnu.photohunting.R;
 import com.wisnu.photohunting.model.Photo;
+import com.wisnu.photohunting.network.Request;
+import com.wisnu.photohunting.network.Response;
 import com.wisnu.photohunting.savingstate.PhotoFeedList;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
 
 public class MapFragment extends Fragment implements OnMapReadyCallback {
     private final String TAG = "com.wisnu.photohunting";
     private GoogleMap mMap;
+
+    public static MapFragment newInstance() {
+        MapFragment fragment = new MapFragment();
+        return fragment;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

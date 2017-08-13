@@ -1,5 +1,8 @@
 package com.wisnu.photohunting.network;
 
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 
 public class Request {
@@ -7,8 +10,8 @@ public class Request {
     private static final API CallAPI = RestBuilder.buildService(API.class);
 
     public static class User {
-        private final static String LOGIN = "user_login";
-        private final static String REGISTER = "user_register";
+        private final static String LOGIN         = "user_login";
+        private final static String REGISTER      = "user_register";
         private final static String UPDATE_STATUS = "user_update_status";
 
         public static Call<Response.User> login(String email, String password) {
@@ -25,19 +28,20 @@ public class Request {
     }
 
     public static class Photo {
-        private static final String GET_PHOTO_ALL = "photo_get_all";
-        private static final String GET_PHOTO_WITH_UID = "photo_get_with_uid";
-        private final static String GET_PHOTO_WITH_PID = "photo_get_with_pid";
-        private final static String GET_PHOTO_WITH_CID = "photo_get_with_cid";
-        private final static String GET_PHOTO_LIKE_WITH_PID = "photo_get_likes_with_pid";
+        private static final String GET_PHOTO_ALL              = "photo_get_all";
+        private static final String GET_PHOTO_WITH_UID         = "photo_get_with_uid";
+        private final static String GET_PHOTO_WITH_PID         = "photo_get_with_pid";
+        private final static String GET_PHOTO_WITH_CID         = "photo_get_with_cid";
+        private final static String GET_PHOTO_LIKE_WITH_UID    = "photo_get_likes_with_uid";
+        private final static String GET_PHOTO_LIKE_WITH_PID    = "photo_get_likes_with_pid";
         private final static String GET_PHOTO_COMMENT_WITH_PID = "photo_get_comments_with_pid";
-        private final static String INSERT_NEW_PHOTO = "photo_insert_new";
-        private final static String INSERT_PHOTO_LIKE = "photo_insert_new_like";
-        private final static String INSERT_PHOTO_COMMENT = "photo_insert_new_comment";
-        private final static String DELETE_PHOTO = "photo_delete";
-        private final static String DELETE_PHOTO_LIKE = "photo_delete_like";
-        private final static String DELETE_PHOTO_COMMENT = "photo_delete_comment";
-        private final static String UPLOAD_NEW_PHOTO = "photo_insert_new_upload";
+        private final static String INSERT_NEW_PHOTO           = "photo_insert_new";
+        private final static String INSERT_PHOTO_LIKE          = "photo_insert_new_like";
+        private final static String INSERT_PHOTO_COMMENT       = "photo_insert_new_comment";
+        private final static String DELETE_PHOTO               = "photo_delete";
+        private final static String DELETE_PHOTO_LIKE          = "photo_delete_like";
+        private final static String DELETE_PHOTO_COMMENT       = "photo_delete_comment";
+        private final static String UPLOAD_NEW_PHOTO           = "photo_insert_new_upload";
 
         public static Call<Response.Photo> get_all() {
             return CallAPI.photo_get_all(GET_PHOTO_ALL);
@@ -55,6 +59,10 @@ public class Request {
             return CallAPI.photo_get_with_cid(GET_PHOTO_WITH_CID, cid);
         }
 
+        public static Call<Response.UserLike> get_photo_like_with_uid(String uid) {
+            return CallAPI.photo_get_like_with_uid(GET_PHOTO_LIKE_WITH_UID, uid);
+        }
+
         public static Call<Response.Like> get_photo_like_with_pid(String pid) {
             return CallAPI.photo_get_like_with_pid(GET_PHOTO_LIKE_WITH_PID, pid);
         }
@@ -63,12 +71,17 @@ public class Request {
             return CallAPI.photo_get_comment_with_pid(GET_PHOTO_COMMENT_WITH_PID, pid);
         }
 
-        public static Call<Response.Basic> insert_new(String photoName, String photoDescription, String photoUrl, String photoLocation, String photoLatitude, String photoLongitude, String uid, String cid) {
-            return CallAPI.photo_insert_new(INSERT_NEW_PHOTO, photoName, photoDescription, photoUrl, photoLocation, photoLatitude, photoLongitude, uid, cid);
+        public static Call<Response.Basic> insert_new(String photoName, String photoDescription,
+                                                      String photoUrl, String photoLocation,
+                                                      String photoLatitude, String photoLongitude,
+                                                      String uid, String cid) {
+            return CallAPI.photo_insert_new(INSERT_NEW_PHOTO, photoName, photoDescription,
+                    photoUrl, photoLocation, photoLatitude, photoLongitude, uid, cid);
         }
 
-        public static void insert_new_upload() {
-
+        public static Call<Response.Basic> insert_new_upload(MultipartBody.Part photoImage) {
+            RequestBody request = RequestBody.create(MediaType.parse("multipart/form-data"), UPLOAD_NEW_PHOTO);
+            return CallAPI.photo_insert_new_upload(request, photoImage);
         }
 
         public static Call<Response.Basic> add_like(String pid, String uid) {

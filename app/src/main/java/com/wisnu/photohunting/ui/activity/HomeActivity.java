@@ -1,6 +1,5 @@
 package com.wisnu.photohunting.ui.activity;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
@@ -8,19 +7,20 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
 import com.wisnu.photohunting.R;
-import com.wisnu.photohunting.adapter.ViewPagerAdapter;
+import com.wisnu.photohunting.adapter.FragmentPagerAdapter;
 import com.wisnu.photohunting.ui.fragment.CameraFragment;
 import com.wisnu.photohunting.ui.fragment.CategoryFragment;
-import com.wisnu.photohunting.ui.fragment.FavouriteFragment;
 import com.wisnu.photohunting.ui.fragment.MapFragment;
 import com.wisnu.photohunting.ui.fragment.PhotoFeedFragment;
 import com.wisnu.photohunting.ui.fragment.UserFragment;
+import com.wisnu.photohunting.view.PhotoViewPager;
 
 public class HomeActivity extends AppCompatActivity {
-    Toolbar          toolbar;
-    ViewPager        viewPager;
-    ViewPagerAdapter viewPagerAdapter;
-    TabLayout        tabLayout;
+    public static PhotoViewPager viewPager;
+
+    Toolbar              toolbar;
+    FragmentPagerAdapter fragmentPagerAdapter;
+    TabLayout            tabLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,16 +34,17 @@ public class HomeActivity extends AppCompatActivity {
             getSupportActionBar().setHomeButtonEnabled(true);
         }
 
-        viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
-        viewPagerAdapter.addFragment(new PhotoFeedFragment(), "Photo Feeds");
-        viewPagerAdapter.addFragment(new CategoryFragment(), "Explore Location");
-        viewPagerAdapter.addFragment(new CameraFragment(), "Camera");
-        viewPagerAdapter.addFragment(new MapFragment(), "Map Location");
-        viewPagerAdapter.addFragment(new UserFragment(), "User Profile");
-        //viewPagerAdapter.addFragment(new FavouriteFragment(), "Favourite");
+        fragmentPagerAdapter = new FragmentPagerAdapter(getSupportFragmentManager());
+        fragmentPagerAdapter.addFragment(PhotoFeedFragment.newInstance(), "Photo Feeds");
+        fragmentPagerAdapter.addFragment(CategoryFragment.newInstance(), "Explore Location");
+        fragmentPagerAdapter.addFragment(CameraFragment.newInstance(), "Camera");
+        fragmentPagerAdapter.addFragment(MapFragment.newInstance(), "Map Location");
+        fragmentPagerAdapter.addFragment(UserFragment.newInstance(), "User Profile");
+        //fragmentPagerAdapter.addFragment(new FavouriteFragment(), "Favourite");
 
-        viewPager = (ViewPager) findViewById(R.id.support_view_pager);
-        viewPager.setAdapter(viewPagerAdapter);
+        viewPager = (PhotoViewPager) findViewById(R.id.support_view_pager);
+        viewPager.setPagingEnabled(false);
+        viewPager.setAdapter(fragmentPagerAdapter);
         setOnViewPagerListener();
 
         tabLayout = (TabLayout) findViewById(R.id.support_tab_layout);
@@ -70,7 +71,7 @@ public class HomeActivity extends AppCompatActivity {
 
             @Override
             public void onPageSelected(int position) {
-                String title = viewPagerAdapter.getItem(position).getArguments().getString("Title");
+                String title = fragmentPagerAdapter.getItem(position).getArguments().getString("Title");
                 toolbar.setTitle(title);
             }
 

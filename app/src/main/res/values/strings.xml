@@ -4,6 +4,7 @@
     <string name="default_tanggal">12 Sept 2015</string>
     <string name="default_article_like_comment">12 like dan 2 comment</string>
     <string name="comment">Comment</string>
+    <string name="lokasi">Lokasi</string>
     <string name="like">Like</string>
     <string name="komentar">Komentar ...</string>
     <string name="submit">SUBMIT</string>

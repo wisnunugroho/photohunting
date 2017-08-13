@@ -53,7 +53,7 @@ public class LikeAdapter extends RecyclerView.Adapter<LikeAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         String name = likeList.get(position).getName();
-        String date = "like pada tanggal " + likeList.get(position).getLikeDate();
+        String date = likeList.get(position).getLikeDate();
 
         holder.tv_name.setText(name);
         holder.tv_date.setText(date);

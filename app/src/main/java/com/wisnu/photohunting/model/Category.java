@@ -1,6 +1,9 @@
 package com.wisnu.photohunting.model;
 
+import com.google.gson.annotations.SerializedName;
+
 public class Category {
+    @SerializedName("categoryId")
     String categoryID;
     String categoryName;
     String categoryDescription;

@@ -1,5 +1,6 @@
 package com.wisnu.photohunting.network;
 
+import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.http.Field;
@@ -45,7 +46,7 @@ public interface API {
     @FormUrlEncoded
     @POST(BaseURL.END_POINT_SERVICE)
     Call<Response.Photo> photo_get_with_pid(
-            @Field("request") String request, @Field("photoId") String pid);
+            @Field("request") String request, @Field("pid") String pid);
 
     @FormUrlEncoded
     @POST(BaseURL.END_POINT_SERVICE)
@@ -54,20 +55,20 @@ public interface API {
 
     @FormUrlEncoded
     @POST(BaseURL.END_POINT_SERVICE)
-    Call<Response.Like> photo_get_like_with_uid(
-            @Field("request") String request, @Field("photoId") String pid);
+    Call<Response.UserLike> photo_get_like_with_uid(
+            @Field("request") String request, @Field("uid") String pid);
 
     @FormUrlEncoded
     @POST(BaseURL.END_POINT_SERVICE)
     Call<Response.Like> photo_get_like_with_pid(
-            @Field("request") String request, @Field("photoId") String pid);
+            @Field("request") String request, @Field("pid") String pid);
 
     @FormUrlEncoded
     @POST(BaseURL.END_POINT_SERVICE)
     Call<Response.Comment> photo_get_comment_with_pid(
-            @Field("request") String request, @Field("photoId") String pid);
+            @Field("request") String request, @Field("pid") String pid);
 
-    @Multipart
+    @FormUrlEncoded
     @POST(BaseURL.END_POINT_SERVICE)
     Call<Response.Basic> photo_insert_new(
             @Field("request") String request,
@@ -83,28 +84,29 @@ public interface API {
     @Multipart
     @POST(BaseURL.END_POINT_SERVICE)
     Call<Response.Basic> photo_insert_new_upload(
-            @Part("photoImage") RequestBody photoImage);
+            @Part("request") RequestBody request,
+            @Part MultipartBody.Part photoImage);
 
     @FormUrlEncoded
     @POST(BaseURL.END_POINT_SERVICE)
     Call<Response.Basic> photo_like(
-            @Field("request") String request, @Field("photoId") String pid, @Field("uid") String uid);
+            @Field("request") String request, @Field("pid") String pid, @Field("uid") String uid);
 
     @FormUrlEncoded
     @POST(BaseURL.END_POINT_SERVICE)
     Call<Response.Basic> photo_insert_comment(
             @Field("request") String request,
             @Field("photoComment") String photoComment,
-            @Field("photoId") String pid, @Field("uid") String uid);
+            @Field("pid") String pid, @Field("uid") String uid);
 
     @FormUrlEncoded
     @POST(BaseURL.END_POINT_SERVICE)
-    Call<Response.Basic> delete_photo(@Field("request") String request, @Field("photoId") String pid);
+    Call<Response.Basic> delete_photo(@Field("request") String request, @Field("pid") String pid);
 
     @FormUrlEncoded
     @POST(BaseURL.END_POINT_SERVICE)
     Call<Response.Basic> photo_unlike(
-            @Field("request") String request, @Field("uid") String uid, @Field("photoId") String pid);
+            @Field("request") String request, @Field("uid") String uid, @Field("pid") String pid);
 
     @FormUrlEncoded
     @POST(BaseURL.END_POINT_SERVICE)

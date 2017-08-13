@@ -17,7 +17,7 @@ import com.wisnu.photohunting.ui.activity.CategoryListActivity;
 import java.util.List;
 
 public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Holder> {
-    private Activity activity;
+    private Activity       activity;
     private List<Category> listCategory;
 
     public CategoryAdapter(Activity activity, List<Category> listCategory) {
@@ -80,7 +80,10 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Holder
             categoryExplore.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    activity.startActivity(new Intent(activity, CategoryListActivity.class));
+                    String catId  = listCategory.get(getAdapterPosition()).getCategoryID();
+                    Intent intent = new Intent(activity, CategoryListActivity.class);
+                    intent.putExtra("catId", catId);
+                    activity.startActivity(intent);
                 }
             });
         }

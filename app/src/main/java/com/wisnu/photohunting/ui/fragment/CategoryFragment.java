@@ -19,7 +19,12 @@ import java.util.List;
 
 public class CategoryFragment extends Fragment {
     private CategoryAdapter adapter;
-    private List<Category> listCategory;
+    private List<Category>  listCategory;
+
+    public static CategoryFragment newInstance() {
+        CategoryFragment fragment = new CategoryFragment();
+        return fragment;
+    }
 
     private void setupCategory() {
         Category landscape = new Category();

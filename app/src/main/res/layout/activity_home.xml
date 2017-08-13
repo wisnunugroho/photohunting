@@ -15,7 +15,7 @@
         <include layout="@layout/component_toolbar"/>
     </android.support.design.widget.AppBarLayout>
 
-    <android.support.v4.view.ViewPager
+    <com.wisnu.photohunting.view.PhotoViewPager
         android:id="@+id/support_view_pager"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

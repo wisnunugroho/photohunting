@@ -1,6 +1,7 @@
 package com.wisnu.photohunting.network;
 
 import com.google.gson.annotations.SerializedName;
+import com.wisnu.photohunting.model.UserLike;
 
 import java.util.List;
 
@@ -59,6 +60,15 @@ public class Response {
 
         public List<com.wisnu.photohunting.model.Photo> getListPhotoFeeds() {
             return listPhotoFeeds;
+        }
+    }
+
+    public static class UserLike {
+        @SerializedName("data")
+        List<com.wisnu.photohunting.model.UserLike> listUserLike;
+
+        public List<com.wisnu.photohunting.model.UserLike> getUserListLike() {
+            return listUserLike;
         }
     }
 

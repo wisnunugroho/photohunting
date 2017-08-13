@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.view.ViewGroup;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,16 +12,31 @@ import java.util.List;
 /**
  * Created by Wahyu Adi S on 29/11/2015.
  */
-public class ViewPagerAdapter extends FragmentStatePagerAdapter {
+public class FragmentPagerAdapter extends FragmentStatePagerAdapter {
     private boolean        iconOption   = true;
     private List<Fragment> fragmentList = new ArrayList<>();
 
-    public ViewPagerAdapter(FragmentManager fm) {
+    public FragmentPagerAdapter(FragmentManager fm) {
         super(fm);
+    }
+
+    private Fragment mCurrentFragment;
+
+    @Override
+    public void setPrimaryItem(ViewGroup container, int position, Object object) {
+        if (getCurrentFragment() != object) {
+            mCurrentFragment = ((Fragment) object);
+        }
+        super.setPrimaryItem(container, position, object);
+    }
+
+    public Fragment getCurrentFragment() {
+        return mCurrentFragment;
     }
 
     @Override
     public Fragment getItem(int position) {
+        if (mCurrentFragment != null) getCurrentFragment();
         return fragmentList.get(position);
     }
 
