@@ -20,7 +20,9 @@ class Photo {
                 FROM
                     photo
                 INNER JOIN `user` ON photo.id_user = `user`.id_user
-                INNER JOIN category ON photo.id_category = category.id_category";
+                INNER JOIN category ON photo.id_category = category.id_category
+                ORDER BY
+                    photo.date_take DESC";
 
     CRUD::execute($sql, CRUD::$SELECT);
   }
@@ -45,7 +47,9 @@ class Photo {
                 INNER JOIN `user` ON photo.id_user = `user`.id_user
                 INNER JOIN category ON photo.id_category = category.id_category
                 WHERE
-                photo.id_user = $id";
+                    photo.id_user = $id
+                ORDER BY
+                    photoDate DESC";
 
     CRUD::execute($sql, CRUD::$SELECT);
   }
@@ -293,23 +297,25 @@ public static
     if(isset($photoImage)) {
         $check = getimagesize($_FILES["photoImage"]["tmp_name"]);
         if($check !== false) {
-            Console::observe("File is an image - " . $check["mime"] . ".");
+            // Console::observe("File is an image - " . $check["mime"] . ".");
             $uploadOk = 1;
         } else {
-            Console::observe("File is not an image.");
+            // Console::observe("File is not an image.");
             $uploadOk = 0;
         }
     }
     
     // Check if file already exists
     if (file_exists($target_file)) {
-        Console::observer("Sorry, file already exists.");
+        // Console::observer("Sorry, file already exists.");
+        CRUD::error("failed to execute insert data. File already exist");
         $uploadOk = 0;
     }
     
     // Check file size
     if ($_FILES["photoImage"]["size"] > 500000) {
-        Console::observer("Sorry, your file is too large.");
+        // Console::observer("Sorry, your file is too large.");
+        CRUD::error("failed to execute insert data. File too large");
         $uploadOk = 0;
     }
     
@@ -318,9 +324,11 @@ public static
         Console::observer("Maaf, file ini pernah diuplad sebelumnya.");
     } else {
         if (move_uploaded_file($_FILES["photoImage"]["tmp_name"], $target_file)) {
-            Console::observe("The file ". basename( $_FILES["fileToUpload"]["name"]). " berhasil diupload.");
+            // Console::observe("The file ". basename( $_FILES["fileToUpload"]["name"]). " berhasil diupload.");
+            CRUD::success("insert is successfully execute");
         } else {
-            Console::observe("Sorry, there was an error uploading your file.");
+            // Console::observe("Sorry, there was an error uploading your file.");
+            CRUD::error("failed to execute insert data");
         }
     }
   }
